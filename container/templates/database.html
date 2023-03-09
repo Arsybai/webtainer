@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MySQL Database</title>
+    {% include 'head.html' %}
+</head>
+<body class="bg-dark">
+    
+    <div class="modal fade" tabindex="-1" id="addDbModal">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark" style="border-radius: 20px;border: 1px solid gray;">
+                <div class="modal-body bg-dark" style="border-radius: 20px;">
+                    <h4>Create New Database</h4>
+                    
+                    <hr>
+                    <form action="/database/add" method="post">
+                        <div class="form-group">
+                            <label for="name">Database Name</label>
+                            <input oninput="
+                            if (this.value.includes(' ')) {
+                                this.value = this.value.replaceAll(' ','_');
+                            }
+                            " type="text" name="name" id="domainName" class="form-control" placeholder="arsybaiDB">
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;margin-top: 10px;" type="submit"><i class="bi-database-add"></i> Add Database</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal fade" tabindex="-1" id="addUserModal">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark" style="border-radius: 20px;border: 1px solid gray;">
+                <div class="modal-body bg-dark" style="border-radius: 20px;">
+                    <h4>Create New User</h4>
+                    <hr>
+                    <form action="/database/user/add" method="post">
+                        <div class="form-group">
+                            <label for="name">Username</label>
+                            <input oninput="
+                            if (this.value.includes(' ')) {
+                                this.value = this.value.replaceAll(' ','_');
+                            }
+                            " type="text" name="name" id="domainName" class="form-control" placeholder="arsybai">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">
+                                Password
+                            </label>
+                            <input class="form-control" name="password" type="password" placeholder="*****"></input>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%;margin-top: 10px;" type="submit"><i class="bi-person-add"></i> Add User</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="container bg-dark">
+        <div class="row">
+            <div class="col">
+                <h2 style="margin-top: 16px;">Database</h2>
+            </div>
+            <div class="col text-end">
+                {% include 'actionBar.html' %}
+            </div>
+        </div>
+        {% include 'alert.html' %}
+
+        <div class="card bg-dark">
+            <div class="card-body">
+                <h3>Databases</h3>
+                <table class="table">
+                    <thead>
+                        <th>Database</th>
+                        <th>Privileged Users</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        {% for i in database %}
+                        <tr>
+                            <td class="text-primary">{{i.name}}</td>
+                            <td class="text-primary">
+                                {% for u in i.user %}
+                                {{u}},
+                                {% endfor %}
+                            </td>
+                            <td>
+                                <button class="btn btn-none btn-sm text-danger" onclick="deleteDB(this, '{{i.name}}');"><i class="bi-trash"></i> Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDbModal"><i class="bi-plus"></i> Add Database</button>
+            </div>
+        </div>
+
+        <script>
+            function deleteDB(btn, id_) {
+                if (confirm("Are you sure want to delete this Database?")) {
+                    btn.disabled = true;
+                    window.location.href = '/database/delete?name='+id_;
+                }
+            }
+        </script>
+        
+        <div class="card bg-dark">
+            <div class="card-body">
+                <h3>Users</h3>
+                <table class="table">
+                    <thead>
+                        <th>Username</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        {% for u in user %}
+                        <tr>
+                            <td class="text-primary">{{u.name}}</td>
+                            <td>
+                                <select name="prev" id="" class="form-control" onchange="adduserToDb(this, '{{u.name}}');">
+                                    <option value="" disabled selected>-- Add User To Database</option>
+                                    {% for i in database %}
+                                    <option value="{{i.name}}">{{i.name}}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="btn btn-none text-danger" onclick="deleteUser(this, '{{u.name}}');"><i class="bi-trash"></i> Delete</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi-plus"></i> Add User</button>
+            </div>
+        </div>
+        <a href="{{phpmyadmin}}" target="_blank">Go To PhpMyAdmin</a>
+        <script>
+            function adduserToDb(elm, id_) {
+                if (confirm("Are you sure want to add "+id_+" to "+elm.value+" ?")) {
+                    elm.disabled = true;
+                    window.location.href = '/database/grant?user='+id_+'&db='+elm.value;
+                }
+            }
+
+            function deleteUser(btn, id_) {
+                if (confirm("Are you sure want to delete this user?")) {
+                    btn.disabled = true;
+                    window.location.href = '/database/user/delete?name='+id_;
+                }
+            }
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <meta http-equiv="refresh" content="10">
+    {% include 'head.html' %}
+</head>
+<body class="bg-dark">
+    <div class="container bg-dark">
+        <div class="row">
+            <div class="col">
+                <h2 style="margin-top: 16px;">Dashboard</h2>
+                <p class="text-secondary">Made with luv by <a href="https://arsybai.com">Arsybai</a></p>
+            </div>
+            <div class="col text-end">
+                {% include 'actionBar.html' %}
+            </div>
+        </div>
+        <div class="card bg-dark" style="margin-top: 16px;">
+            <div class="card-body">
+                <h3>Environment</h3>
+                <hr>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>OS</td>
+                            <td>{{env_os}}</td>
+                        </tr>
+                        <tr>
+                            <td>CPU</td>
+                            <td>{{env_cpu}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card bg-dark" style="margin-top: 16px;">
+            <div class="card-body">
+                <h3>Usage</h3>
+                <hr>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>CPU</td>
+                            <td>{{usage_cpu}}%</td>
+                        </tr>
+                        <tr>
+                            <td>RAM/MEMORY</td>
+                            <td>{{usage_ram}}%</td>
+                        </tr>
+                        <tr>
+                            <td>Disk/Storage</td>
+                            <td>{{usage_disk}}%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

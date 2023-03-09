@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Run</title>
+    {% include 'head.html' %}
+</head>
+<body class="bg-dark">
+    <div class="container bg-dark">
+        <div class="card bg-dark" style="margin-top: 20px;">
+            <div class="card-body bg-dark">
+                <h3>Run website</h3>
+                <hr>
+                <span id="status">> Preparing...</span>
+                <div class="loader"></div> 
+                <pre class="form-control">
+                    <code id="logs"></code>
+                </pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function checkWebsite() {
+            var logs = document.getElementById('logs');
+            var status = document.getElementById("status");
+            $.get('/website/deploy/status?id={{web_id}}').done(async function(data){
+                await new Promise(r => setTimeout(r, 1000));
+                if (data == 'running') {
+                    status.innerHTML = "Setup Successfully";
+                    logs.innerHTML = logs.innerHTML + "Website running...</br>You will be redirected to website menu in 5 sec";
+                    await new Promise(r => setTimeout(r, 1000));
+                    logs.innerHTML = logs.innerHTML + "</br>You will be redirected to website menu in 4 sec";
+                    await new Promise(r => setTimeout(r, 1000));
+                    logs.innerHTML = logs.innerHTML + "</br>You will be redirected to website menu in 3 sec";
+                    await new Promise(r => setTimeout(r, 1000));
+                    logs.innerHTML = logs.innerHTML + "</br>You will be redirected to website menu in 2 sec";
+                    await new Promise(r => setTimeout(r, 1000));
+                    logs.innerHTML = logs.innerHTML + "</br>You will be redirected to website menu in 1 sec";
+                    await new Promise(r => setTimeout(r, 1000));
+                    window.location.href = '/website';
+                } else {
+                    checkWebsite();
+                }
+            })
+        }
+
+        async function deployWebsite() {
+            var logs = document.getElementById('logs');
+            var status = document.getElementById("status");
+            $.get('/website/deploy?id={{web_id}}').done(async function(data){
+                logs.innerHTML = log.innerHTML + "Cheking Website Status...</br>";
+                await new Promise(r => setTimeout(r, 1000));
+            })
+            alert("Deploy DONE. it may take a couple of minute to take effect, Please wait...");
+            window.location.href = '/website';
+        }
+
+        async function checkSSLStatus() {
+            var logs = document.getElementById('logs');
+            var status = document.getElementById("status");
+            $.get('/website/ssltls/status?id={{web_id}}').done(async function(data){
+                await new Promise(r => setTimeout(r, 1000));
+                if (data == 'y') {
+                    status.innerHTML = "> Deploying Website...";
+                    logs.innerHTML = "Preparing to deploy...</br>";
+                    await new Promise(r => setTimeout(r, 1000));
+                    deployWebsite();
+                } else {
+                    logs.innerHTML = log.innerHTML + "Cheking SSL Status...</br>";
+                    checkSSLStatus();
+                }
+            })
+        }
+
+        async function setupSSL() {
+            var logs = document.getElementById('logs');
+            var status = document.getElementById("status");
+            $.get('/website/ssltls?id={{web_id}}').done(async function(data){
+                if (data['status'] == 'success') {
+                    await new Promise(r => setTimeout(r, 1000));
+                    checkSSLStatus();
+                } else {
+                    status.innerHTML = "> Setup Failed";
+                    logs.innerHTML = logs.innerHTML + data['message'];
+                }
+            }).fail(function(data){
+                status.innerHTML = "> Setup Failed";
+                logs.innerHTML = JSON.stringify(data);
+            })
+        }
+
+        async function buildServerBlock(){
+            var logs = document.getElementById('logs');
+            var status = document.getElementById("status");
+            $.get('/website/build?id={{web_id}}').done(async function(data){
+                await new Promise(r => setTimeout(r, 1000));
+                logs.innerHTML = data['message'];
+                if (data['status'] == 'success') {
+                    status.innerHTML = "> Preparing to deploy...";
+                    logs.innerHTML = "Checking Server...</br>";
+                    setupSSL();
+                } else {
+                    status.innerHTML = "> Setup Failed";
+                    logs.innerHTML = data['message'];
+                }
+            }).fail(function(data){
+                status.innerHTML = "> Setup Failed";
+                logs.innerHTML = JSON.stringify(data);
+            })
+        }
+
+        async function unzipFile() {
+            var logs = document.getElementById('logs');
+            var status = document.getElementById("status");
+            $.get('/website/unzip?id={{web_id}}').done(async function(data){
+                logs.innerHTML = data['message'];
+                await new Promise(r => setTimeout(r, 1000));
+                if (data['status'] == 'success') {
+                    status.innerHTML = "> Building server block...";
+                    buildServerBlock();
+                } else {
+                    status.innerHTML = "> Setup Failed";
+                    logs.innerHTML = data['message'];
+                }
+            }).fail(function(data){
+                status.innerHTML = "> Setup Failed";
+                logs.innerHTML = JSON.stringify(data);
+            })
+        }
+    </script>
+
+    <script>
+        $(document).ready(async function(){
+            await new Promise(r => setTimeout(r, 3000));
+            document.getElementById("logs").innerHTML = 'Setting Up done'
+            await new Promise(r => setTimeout(r, 300));
+            status.innerHTML = "> Unziping File...";
+            unzipFile();
+        })
+    </script>
+</body>
+</html>

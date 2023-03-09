@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Domain</title>
+    {% include 'head.html' %}
+</head>
+
+<div class="modal fade" tabindex="-1" id="addDomainModal">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark" style="border-radius: 20px;border: 1px solid gray;">
+            <div class="modal-body bg-dark" style="border-radius: 20px;">
+                <h4>Add Domain</h4>
+                <span class="text-secondary">Make sure you point A record to this server IP</span>
+                <hr>
+                <form action="/domain/add" method="post">
+                    <div class="form-group">
+                        <label for="domainName">Domain Name</label>
+                        <input type="text" name="domainName" id="domainName" class="form-control" placeholder="arsybai.com">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;margin-top: 10px;" type="submit"><i class="bi-globe"></i> Add Domain</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<body class="bg-dark">
+    <div class="container bg-dark">
+        <div class="row">
+            <div class="col">
+                <h2 style="margin-top: 16px;">Domain</h2>
+            </div>
+            <div class="col text-end">
+                {% include 'actionBar.html' %}
+            </div>
+        </div>
+        {% include 'alert.html' %}
+        <div class="card bg-dark" style="margin-top: 16px;">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <input type="text" class="form-control bg-dark" style="color: white;" placeholder="Search..." oninput="searchDomain(this.value);">
+                        <script>
+                            function searchDomain(vv) {
+                                var domains = document.getElementsByClassName("domain");
+                                for (let i of domains) {
+                                    if (i.innerHTML.toLowerCase().includes(vv.toLowerCase())) {
+                                        i.style.display = '';
+                                    } else {
+                                        i.style.display = 'none';
+                                    }
+                                }
+                            }
+                        </script>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDomainModal" style="width: 100%;"><i class="bi-plus"></i> Add Domain</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card bg-dark" style="margin-top: 16px;">
+            <div class="card-body">
+                <h3><i class="bi-globe"></i> Domain</h3>
+                <table class="table">
+                    <thead>
+                        <th>Domain Name</th>
+                        <th>Path</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        {% for domain in domains %}
+                        <tr class="domain">
+                            <td>{{domain.domain}}</td>
+                            <td>{{domain.path}}</td>
+                            <td>
+                                <a href="http://{{domain.domain}}" target="_blank"><i class="bi-box-arrow-in-up-right"></i></a>
+                                <a href="/domain/delete?id={{domain.id}}"><i class="bi-trash text-danger"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

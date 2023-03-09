@@ -1,0 +1,13 @@
+<style>
+    .alert {
+        border-radius: 20px;
+        padding: 8px;
+    }
+</style>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{category}}">{{message}}</div>
+  {% endfor %}
+{% endif %}
+{% endwith %}

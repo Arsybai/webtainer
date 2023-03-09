@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website</title>
+    {% include 'head.html' %}
+</head>
+
+<div class="modal fade" tabindex="-1" id="addDomainModal">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark" style="border-radius: 20px;border: 1px solid gray;">
+            <div class="modal-body bg-dark" style="border-radius: 20px;">
+                <h4>Add Website</h4>
+                <p class="text-secondary">Made with luv by <a href="https://arsybai.com">Arsybai</a></p>
+                <hr>
+                <form action="/website/add" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="domainName">Choose Domain</label>
+                        <select name="domain" id="domainName" required class="form-control">
+                            <option value="" selected disabled>-- Choose Domain ---</option>
+                            {% for domain in domains %}
+                            <option value="{{domain.id}}">{{domain.domain}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="lang">Select web type</label>
+                        <select name="lang" id="lang" class="form-control" required>
+                            <option value="" selected disabled>-- Choose web type --</option>
+                            <option value="python">Python</option>
+                            <option value="php">Php</option>
+                            <option value="html">Html Site</option>
+                        </select>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <label for="appFile">App Startup File</label>
+                        <input name="filename" type="text" placeholder="app.py" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appEndpoint">App Endpoint</label>
+                        <input type="text" name="endpoint" placeholder="application" class="form-control" required>
+                    </div>
+                    <hr>
+                    <h5>Web File</h5>
+                    <span class="text-secondary">Only .zip file!</span>
+                    <input type="file" name="webfile" accept=".zip" class="form-control" required>
+                    <button class="btn btn-primary" style="width: 100%;margin-top: 10px;" type="submit"><i class="bi-globe"></i> Add Website</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<body class="bg-dark">
+    <div class="container bg-dark">
+        <div class="row">
+            <div class="col">
+                <h2 style="margin-top: 16px;">Website</h2>
+            </div>
+            <div class="col text-end">
+                {% include 'actionBar.html' %}
+            </div>
+        </div>
+        {% include 'alert.html' %}
+        <div class="card bg-dark" style="margin-top: 16px;">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col">
+                        <input type="text" class="form-control bg-dark" style="color: white;" placeholder="Search..." oninput="searchDomain(this.value);">
+                        <script>
+                            function searchDomain(vv) {
+                                var domains = document.getElementsByClassName("website");
+                                for (let i of domains) {
+                                    if (i.innerHTML.toLowerCase().includes(vv.toLowerCase())) {
+                                        i.style.display = '';
+                                    } else {
+                                        i.style.display = 'none';
+                                    }
+                                }
+                            }
+                        </script>
+                    </div>
+                    <div class="col-2">
+                        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDomainModal" style="width: 100%;"><i class="bi-plus"></i> Add Website</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card bg-dark" style="margin-top: 16px;">
+            <div class="card-body">
+                <h3><i class="bi-hdd-network"></i> Website</h3>
+                <table class="table">
+                    <thead>
+                        <th>URL</th>
+                        <th>Status</th>
+                        <th>Start file</th>
+                        <th>endpoint</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        {% for web in websites %}
+                        <tr class="website">
+                            <td>
+                                <a href="http://{{web.url}}" target="_blank">{{web.url}} <i class="bi-box-arrow-in-up-right"></i></a>
+                            </td>
+                            {% if web.status == 'running' %}
+                            <td class="text-success">Running</td>
+                            {% else %}
+                            <td class="text-danger">Stopped</td>
+                            {%endif%}
+                            <td>
+                                <code>{{web.filename}}</code>
+                            </td>
+                            <td>
+                                <code>{{web.endpoint}}</code>
+                            </td>
+                            <td>
+                                {% if web.status == 'running' %}
+                                <a href="/website/stop?id={{web.id}}"  class="btn btn-sm btn-danger"><i class="bi-stop"></i> Stop</a>
+                                <a href="/website/restart?id={{web.id}}"  class="btn btn-sm btn-secondary"><i class="bi-arrow-clockwise"></i> Restart</a>
+                                {% else %}
+                                <a href="/website/run?id={{web.id}}"  class="btn btn-sm btn-success"><i class="bi-play"></i> Run</a>
+                                <button disabled class="btn btn-sm btn-secondary"><i class="bi-arrow-clockwise"></i> Restart</button>
+                                {%endif%}
+                                <button onclick="updateFile(this, '{{web.id}}');" class="btn btn-sm btn-warning"><i class="bi-archive"></i> Update File</button>
+                                <button class="btn btn-sm btn-danger" onclick="
+                                if (confirm('Are you sure want to delete {{web.url}}? This action can not be undone!')) {
+                                    window.location.href = '/website/delete?id={{web.id}}';
+                                }
+                                "><i class="bi-trash"></i> Remove</button>
+                            </td>
+                        </tr>
+                        <form id="updateFileForm{{web.id}}" enctype="multipart/form-data" action="/website/file?id={{web.id}}" method="post" style="display: none;">
+                            <input type="file" name="webfile" id="webfileInput{{web.id}}" style="display: none;" onchange="$('#updateFileForm{{web.id}}').submit();">
+                        </form>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        function updateFile(btn, web_id) {
+            document.getElementById("webfileInput"+web_id).click();
+            btn.disabled = true;
+            btn.innerHTML = 'Please wait..';
+        }
+    </script>
+</body>
+</html>

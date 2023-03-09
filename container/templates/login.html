@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login ~ Web Container</title>
+        {% include 'head.html' %}
+    </head>
+<body class="bg-dark">
+    <div class="container bg-dark">
+        <div class="card bg-dark" style="margin-top: 50px;">
+            <div class="card-body">
+                <h3>Sign In</h3>
+                <p class="text-secondary">Made with luv by <a href="https://arsybai.com">Arsybai</a></p>
+                {% include 'alert.html' %}
+                <form action="" method="post">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required class="form-control">
+                    </div>
+                    <style>
+                        .btn {
+                            width: 100%;
+                            margin-top: 16px;
+                            border-radius: 20px;
+                        }
+                        .form-control {
+                            border-radius: 20px;
+                        }
+                        .card {
+                            border-radius: 20px;
+                        }
+                    </style>
+                    <button class="btn btn-sm btn-primary" type="submit"><i class="bi-box-arrow-in-left"></i> Sign In</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

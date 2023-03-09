@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSL/TLS</title>
+    {% include 'head.html' %}
+</head>
+<body class="bg-dark">
+    <div class="container bg-dark">
+        <div class="row">
+            <div class="col">
+                <h2 style="margin-top: 16px;">SSL/TLS</h2>
+            </div>
+            <div class="col text-end">
+                {% include 'actionBar.html' %}
+            </div>
+        </div>
+        {% include 'alert.html' %}
+
+        <div class="card bg-dark">
+            <div class="card-body">
+                <h3>Websites</h3>
+
+                <table class="table">
+                    <thead>
+                        <th>Site</th>
+                        <th>SSL Status</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody>
+                        {% for i in sites %}
+                        <tr>
+                            <td><a class="web" id="{{i.id}}" href="https://{{i.url}}">{{i.url}}</a></td>
+                            <td class="text-secondary" id="status{{i.id}}">Cheking...</td>
+                            <td><button onclick="installSSL(this, '{{i.id}}');" class="btn btn-sm btn-primary" id="btnInstall{{i.id}}"><i class="bi-play"></i> Install SSL</button></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function installSSL(btn, id_) {
+            btn.disabled = true;
+            window.location.href = '/ssl/install?id='+id_;
+        }
+    </script>
+    <script>
+        async function cheking() {
+            var sites = document.getElementsByClassName("web");
+            for (let i of sites) {
+                await new Promise(r => setTimeout(r, 100));
+                $.get('/ssl/status?url='+i.href).done(function(data){
+                    document.getElementById("status"+i.id).innerHTML = "Let's Encrypt";
+                    document.getElementById("status"+i.id).classList.replace("text-secondary","text-success");
+                    document.getElementById("btnInstall"+i.id).disabled=true;
+                }).fail(function(){
+                    document.getElementById("status"+i.id).innerHTML = "No SSL";
+                    document.getElementById("status"+i.id).classList.replace("text-secondary","text-danger");
+                    document.getElementById("btnInstall"+i.id).disabled=false;
+                })
+            }
+            await new Promise(r => setTimeout(r, 5000));
+            cheking();
+        }
+        $(document).ready(async function(){
+            cheking();
+        })
+    </script>
+</body>
+</html>

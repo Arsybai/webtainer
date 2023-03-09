@@ -1,0 +1,12 @@
+{
+    "username": "",
+    "password": "",
+    "phpmyadmin": "",
+    "sites": [],
+    "domains": [],
+    "current": 8001,
+    "database": {
+        "user": [],
+        "db": []
+    }
+}
