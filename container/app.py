@@ -5,12 +5,11 @@ from base64 import decode
 from threading import *
 import requests
 from time import sleep
-from flask_socketio import SocketIO
+import subprocess
 
 app = Flask(__name__)
 app.secret_key = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 app.config['CORS_HEADERS'] = 'Content-Type'
-socketio = SocketIO(app)
 
 def isActive():
     if session.get("token") != None:
@@ -105,17 +104,15 @@ def popen(cmd):
     except:
         return str(out)
     
-@app.route('/ssh')
-def sshssh():
+@app.route('/ssh', methods=['GET', 'POST'])
+def ssh():
+    if request.method == 'POST':
+        command = request.form.get('command')
+        if command:
+            process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, error = process.communicate()
+            return jsonify({'output': output.decode('utf-8'), 'error': error.decode('utf-8')})
     return render_template('ssh.html')
-    
-@socketio.on('command')
-def handle_command(command):
-    # Execute the command and send the output back to the client
-    import subprocess
-    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    output, error = process.communicate()
-    socketio.emit('output', {'output': output.decode('utf-8'), 'error': error.decode('utf-8')})
 
 @app.route('/database/grant')
 def appDatabaseGrant():
@@ -562,4 +559,3 @@ def appLogout():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
-    socketio.run(app)

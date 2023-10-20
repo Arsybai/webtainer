@@ -4,25 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web Terminal</title>
+    <title>SSH Terminal</title>
 </head>
 
 <body>
     <div id="terminal"></div>
 
-    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
     <script>
-        var socket = io.connect('http://' + document.domain + ':' + location.port);
-
-        socket.on('output', function(data) {
-            document.getElementById('terminal').innerText += data.output;
-            document.getElementById('terminal').innerText += data.error;
-        });
-
         function sendCommand() {
             var command = document.getElementById('command').value;
-            socket.emit('command', command);
-            document.getElementById('terminal').innerText += '> ' + command + '\n';
+
+            if (command) {
+                fetch('/ssh', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'command=' + encodeURIComponent(command)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('terminal').innerText += '> ' + command + '\n';
+                    document.getElementById('terminal').innerText += data.output;
+                    document.getElementById('terminal').innerText += data.error;
+                });
+            }
+
             document.getElementById('command').value = '';
         }
     </script>
