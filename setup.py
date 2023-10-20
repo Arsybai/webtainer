@@ -57,7 +57,7 @@ clearTerminal()
 
 print("\nInstalling Php...")
 sleep(2)
-os.system("sudo apt install php8.1-fpm php-mysql -y")
+os.system("sudo apt install php-fpm php-mysql -y")
 clearTerminal()
 
 print("\nYou need to do something :)")
@@ -124,7 +124,7 @@ server {
     }
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_pass unix:/var/run/php/php-fpm.sock;
      }
     location ~ /\.ht {
         deny all;
