@@ -54,11 +54,11 @@
             for (let i of sites) {
                 await new Promise(r => setTimeout(r, 100));
                 $.get('/ssl/status?url='+i.href).done(function(data){
-                    document.getElementById("status"+i.id).innerHTML = "Let's Encrypt";
+                    document.getElementById("status"+i.id).innerHTML = data;
                     document.getElementById("status"+i.id).classList.replace("text-secondary","text-success");
                     document.getElementById("btnInstall"+i.id).disabled=true;
                 }).fail(function(){
-                    document.getElementById("status"+i.id).innerHTML = "No SSL";
+                    document.getElementById("status"+i.id).innerHTML = data;
                     document.getElementById("status"+i.id).classList.replace("text-secondary","text-danger");
                     document.getElementById("btnInstall"+i.id).disabled=false;
                 })

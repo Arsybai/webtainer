@@ -6,6 +6,8 @@ from threading import *
 import requests
 from time import sleep
 import subprocess
+import ssl
+import socket
 
 app = Flask(__name__)
 app.secret_key = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -236,8 +238,25 @@ def appSSLWebsiteInstall():
 def appSSLWebsiteStatus():
     if not isActive():
         return onSessionExpired()
-    r = requests.get(request.args['url'])
-    return 'aaa', r.status_code
+    def check_ssl_certificate(domain):
+        try:
+            context = ssl.create_default_context()
+            with context.wrap_socket(socket.socket(), server_hostname=domain) as sock:
+                sock.connect((domain, 443))
+                certificate = sock.getpeercert()
+                
+                # issuer = next((v for k, v in certificate['issuer'] if k == 'organizationName'), None)
+                issuer_organization = next((v for k, v in certificate['issuer'] if k == 'organizationName'), None)
+                
+                if issuer_organization:
+                    return issuer_organization
+                else:
+                    return 'Unknown SSL Issuer'
+        except ssl.SSLError:
+            return 'No SSL', 404
+        except socket.gaierror:
+            return 'Invalid domain or IP address', 404
+    return check_ssl_certificate(request.args['url'])
 
 @app.route('/ssl')
 def appSSLWebsite():
