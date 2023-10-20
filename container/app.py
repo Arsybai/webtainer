@@ -5,14 +5,12 @@ from base64 import decode
 from threading import *
 import requests
 from time import sleep
-import paramiko
+from flask_socketio import SocketIO
 
 app = Flask(__name__)
 app.secret_key = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 app.config['CORS_HEADERS'] = 'Content-Type'
-
-SSH_HOST = 'localhost'
-SSH_PORT = 22
+socketio = SocketIO(app)
 
 def isActive():
     if session.get("token") != None:
@@ -107,25 +105,17 @@ def popen(cmd):
     except:
         return str(out)
     
-@app.route('/ssh', methods=['POST','GET'])
+@app.route('/ssh')
 def sshssh():
-    if not (request.method=='POST'):
-        return render_template('ssh.html')
-    else:
-        command = request.form['command']
-        ssh_client = paramiko.SSHClient()
-        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-
-        # Load the private key for authentication
-        private_key = paramiko.RSAKey.from_private_key_file(SSH_PRIVATE_KEY_PATH)
-
-        # Establish the SSH connection using key-based authentication
-        ssh_client.connect(SSH_HOST, port=SSH_PORT, pkey=private_key)
-        
-        stdin, stdout, stderr = ssh_client.exec_command(command)
-        output = stdout.read().decode('utf-8')
-        ssh_client.close()
-        return render_template('ssh.html', command=command, output=output)
+    return render_template('ssh.html')
+    
+@socketio.on('command')
+def handle_command(command):
+    # Execute the command and send the output back to the client
+    import subprocess
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    socketio.emit('output', {'output': output.decode('utf-8'), 'error': error.decode('utf-8')})
 
 @app.route('/database/grant')
 def appDatabaseGrant():
@@ -572,3 +562,4 @@ def appLogout():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8000, debug=True)
+    socketio.run(app)

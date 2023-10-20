@@ -4,21 +4,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSH Web Interface</title>
+    <title>Web Terminal</title>
 </head>
 
 <body>
-    <h1>SSH Web Interface</h1>
-    <form action="" method="post">
-        <label for="command">Enter SSH Command:</label>
-        <input type="text" id="command" name="command" required>
-        <button type="submit">Execute</button>
-    </form>
-    {% if command %}
-    <h2>Command: {{ command }}</h2>
-    <h2>Output:</h2>
-    <pre>{{ output }}</pre>
-    {% endif %}
+    <div id="terminal"></div>
+
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('output', function(data) {
+            document.getElementById('terminal').innerText += data.output;
+            document.getElementById('terminal').innerText += data.error;
+        });
+
+        function sendCommand() {
+            var command = document.getElementById('command').value;
+            socket.emit('command', command);
+            document.getElementById('terminal').innerText += '> ' + command + '\n';
+            document.getElementById('command').value = '';
+        }
+    </script>
+
+    <input type="text" id="command" placeholder="Enter command" onkeydown="if (event.keyCode === 13) { sendCommand(); return false; }">
+    <button onclick="sendCommand()">Send</button>
 </body>
 
 </html>

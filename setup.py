@@ -30,7 +30,7 @@ print("\nInstalling requirements...")
 sleep(2)
 os.system("sudo pip3 install waitress")
 os.system("sudo pip3 install psutil")
-os.system("sudo pip3 install paramiko")
+os.system("sudo pip3 install flask-socketio")
 clearTerminal()
 
 print("\nInstalling Nginx...")
