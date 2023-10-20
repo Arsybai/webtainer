@@ -5,10 +5,14 @@ from base64 import decode
 from threading import *
 import requests
 from time import sleep
+import paramiko
 
 app = Flask(__name__)
 app.secret_key = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+SSH_HOST = 'localhost'
+SSH_PORT = 22
 
 def isActive():
     if session.get("token") != None:
@@ -102,6 +106,26 @@ def popen(cmd):
         return str(decode(out))
     except:
         return str(out)
+    
+@app.route('/ssh', methods=['POST','GET'])
+def sshssh():
+    if not (request.method=='POST'):
+        return render_template('ssh.html')
+    else:
+        command = request.form['command']
+        ssh_client = paramiko.SSHClient()
+        ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+        # Load the private key for authentication
+        private_key = paramiko.RSAKey.from_private_key_file(SSH_PRIVATE_KEY_PATH)
+
+        # Establish the SSH connection using key-based authentication
+        ssh_client.connect(SSH_HOST, port=SSH_PORT, pkey=private_key)
+        
+        stdin, stdout, stderr = ssh_client.exec_command(command)
+        output = stdout.read().decode('utf-8')
+        ssh_client.close()
+        return render_template('ssh.html', command=command, output=output)
 
 @app.route('/database/grant')
 def appDatabaseGrant():

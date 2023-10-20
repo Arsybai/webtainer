@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH Web Interface</title>
+</head>
+
+<body>
+    <h1>SSH Web Interface</h1>
+    <form action="/execute" method="post">
+        <label for="command">Enter SSH Command:</label>
+        <input type="text" id="command" name="command" required>
+        <button type="submit">Execute</button>
+    </form>
+    {% if command %}
+    <h2>Command: {{ command }}</h2>
+    <h2>Output:</h2>
+    <pre>{{ output }}</pre>
+    {% endif %}
+</body>
+
+</html>
