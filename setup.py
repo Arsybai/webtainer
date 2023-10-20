@@ -1,4 +1,4 @@
-import os, json
+import os, json, sys
 from time import sleep
 
 with open('container/data.json', 'r') as config:
@@ -25,11 +25,14 @@ clearTerminal()
 print("\nInstalling requirements...")
 sleep(2)
 os.system("sudo pip3 install flask")
+os.system("sudo apt install python3-flask")
 clearTerminal()
 print("\nInstalling requirements...")
 sleep(2)
 os.system("sudo pip3 install waitress")
+os.system("sudo apt install python3-waitress")
 os.system("sudo pip3 install psutil")
+os.system("sudo apt install python3-psutil")
 clearTerminal()
 
 print("\nInstalling Nginx...")
