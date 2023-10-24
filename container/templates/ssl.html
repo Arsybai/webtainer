@@ -22,23 +22,24 @@
         <div class="card bg-dark">
             <div class="card-body">
                 <h3>Websites</h3>
-
-                <table class="table">
-                    <thead>
-                        <th>Site</th>
-                        <th>SSL Status</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        {% for i in sites %}
-                        <tr>
-                            <td><a class="web" id="{{i.id}}" href="https://{{i.url}}">{{i.url}}</a></td>
-                            <td class="text-secondary" id="status{{i.id}}">Cheking...</td>
-                            <td><button onclick="installSSL(this, '{{i.id}}');" class="btn btn-sm btn-primary" id="btnInstall{{i.id}}"><i class="bi-play"></i> Install SSL</button></td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Site</th>
+                            <th>SSL Status</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            {% for i in sites %}
+                            <tr>
+                                <td><a class="web" id="{{i.id}}" href="https://{{i.url}}">{{i.url}}</a></td>
+                                <td class="text-secondary" id="status{{i.id}}">Cheking...</td>
+                                <td><button onclick="installSSL(this, '{{i.id}}');" class="btn btn-sm btn-primary" id="btnInstall{{i.id}}"><i class="bi-play"></i> Install SSL</button></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>

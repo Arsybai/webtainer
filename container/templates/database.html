@@ -75,28 +75,30 @@
         <div class="card bg-dark">
             <div class="card-body">
                 <h3>Databases</h3>
-                <table class="table">
-                    <thead>
-                        <th>Database</th>
-                        <th>Privileged Users</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        {% for i in database %}
-                        <tr>
-                            <td class="text-primary">{{i.name}}</td>
-                            <td class="text-primary">
-                                {% for u in i.user %}
-                                {{u}},
-                                {% endfor %}
-                            </td>
-                            <td>
-                                <button class="btn btn-none btn-sm text-danger" onclick="deleteDB(this, '{{i.name}}');"><i class="bi-trash"></i> Delete</button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Database</th>
+                            <th>Privileged Users</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            {% for i in database %}
+                            <tr>
+                                <td class="text-primary">{{i.name}}</td>
+                                <td class="text-primary">
+                                    {% for u in i.user %}
+                                    {{u}},
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    <button class="btn btn-none btn-sm text-danger" onclick="deleteDB(this, '{{i.name}}');"><i class="bi-trash"></i> Delete</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDbModal"><i class="bi-plus"></i> Add Database</button>
             </div>
         </div>
@@ -113,28 +115,30 @@
         <div class="card bg-dark">
             <div class="card-body">
                 <h3>Users</h3>
-                <table class="table">
-                    <thead>
-                        <th>Username</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        {% for u in user %}
-                        <tr>
-                            <td class="text-primary">{{u.name}}</td>
-                            <td>
-                                <select name="prev" id="" class="form-control" onchange="adduserToDb(this, '{{u.name}}');">
-                                    <option value="" disabled selected>-- Add User To Database</option>
-                                    {% for i in database %}
-                                    <option value="{{i.name}}">{{i.name}}</option>
-                                    {% endfor %}
-                                </select>
-                                <button class="btn btn-none text-danger" onclick="deleteUser(this, '{{u.name}}');"><i class="bi-trash"></i> Delete</button>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Username</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            {% for u in user %}
+                            <tr>
+                                <td class="text-primary">{{u.name}}</td>
+                                <td>
+                                    <select name="prev" id="" class="form-control" onchange="adduserToDb(this, '{{u.name}}');">
+                                        <option value="" disabled selected>-- Add User To Database</option>
+                                        {% for i in database %}
+                                        <option value="{{i.name}}">{{i.name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button class="btn btn-none text-danger" onclick="deleteUser(this, '{{u.name}}');"><i class="bi-trash"></i> Delete</button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal"><i class="bi-plus"></i> Add User</button>
             </div>
         </div>

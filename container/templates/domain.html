@@ -65,25 +65,27 @@
         <div class="card bg-dark" style="margin-top: 16px;">
             <div class="card-body">
                 <h3><i class="bi-globe"></i> Domain</h3>
-                <table class="table">
-                    <thead>
-                        <th>Domain Name</th>
-                        <th>Path</th>
-                        <th>Action</th>
-                    </thead>
-                    <tbody>
-                        {% for domain in domains %}
-                        <tr class="domain">
-                            <td>{{domain.domain}}</td>
-                            <td>{{domain.path}}</td>
-                            <td>
-                                <a href="http://{{domain.domain}}" target="_blank"><i class="bi-box-arrow-in-up-right"></i></a>
-                                <a href="/domain/delete?id={{domain.id}}"><i class="bi-trash text-danger"></i></a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <th>Domain Name</th>
+                            <th>Path</th>
+                            <th>Action</th>
+                        </thead>
+                        <tbody>
+                            {% for domain in domains %}
+                            <tr class="domain">
+                                <td>{{domain.domain}}</td>
+                                <td>{{domain.path}}</td>
+                                <td>
+                                    <a href="http://{{domain.domain}}" target="_blank"><i class="bi-box-arrow-in-up-right"></i></a>
+                                    <a href="/domain/delete?id={{domain.id}}"><i class="bi-trash text-danger"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
