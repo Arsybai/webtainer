@@ -129,3 +129,4 @@ dmypy.json
 .pyre/
 t.py
 example/app.zip
+templates/data.json
