@@ -244,19 +244,24 @@ def appSSLWebsiteStatus():
             with context.wrap_socket(socket.socket(), server_hostname=domain) as sock:
                 sock.connect((domain, 443))
                 certificate = sock.getpeercert()
-                
-                # issuer = next((v for k, v in certificate['issuer'] if k == 'organizationName'), None)
-                issuer_organization = next((v for k, v in certificate['issuer'] if k == 'organizationName'), None)
-                
+                # print(certificate)
+                # # for k in certificate['issuer']:
+                # #     print(f"{k}")
+                issuer_organization = None
+                for item in certificate['issuer']:
+                    for attribute, value in item:
+                        if attribute == 'organizationName':
+                            issuer_organization = value
+                            break
                 if issuer_organization:
                     return issuer_organization
                 else:
                     return 'Unknown SSL Issuer'
-        except ssl.SSLError:
-            return 'No SSL', 404
-        except socket.gaierror:
-            return 'Invalid domain or IP address', 404
-    return check_ssl_certificate(request.args['url'])
+        except ssl.SSLError as e:
+            return f'{e}'
+        except socket.gaierror as e:
+            return f'{e}'
+    return check_ssl_certificate(request.args['url'].replace("https://","").replace("http://",""))
 
 @app.route('/ssl')
 def appSSLWebsite():

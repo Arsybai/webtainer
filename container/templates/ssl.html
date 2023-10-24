@@ -56,7 +56,7 @@
                 $.get('/ssl/status?url='+i.href).done(function(data){
                     document.getElementById("status"+i.id).innerHTML = data;
                     document.getElementById("status"+i.id).classList.replace("text-secondary","text-success");
-                    document.getElementById("btnInstall"+i.id).disabled=true;
+                    //document.getElementById("btnInstall"+i.id).disabled=true;
                 }).fail(function(){
                     document.getElementById("status"+i.id).innerHTML = data;
                     document.getElementById("status"+i.id).classList.replace("text-secondary","text-danger");
