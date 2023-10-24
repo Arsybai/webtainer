@@ -472,6 +472,8 @@ def appAddWebsite():
         "endpoint": field['endpoint'],
         "path": f"/root/{getDomains('id', field['domain'])[0]['domain'].replace('.','_')}"
     }
+    if field['lang'] == 'html' or field['lang'] == 'php':
+        web_['path'] = f"/var/www/{getDomains('id', field['domain'])[0]['domain'].replace('.','_')}"
     if getDomains('id', field['domain']) == []:
         flash("Domain not found in this server!","danger")
         return redirect('/website')
