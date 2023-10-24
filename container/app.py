@@ -504,10 +504,28 @@ def appRunWeb():
     flash("Successfully run website.","success")
     return redirect('/website')
 
+def get_folder_size(folder_path):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(folder_path):
+        for filename in filenames:
+            file_path = os.path.join(dirpath, filename)
+            total_size += os.path.getsize(file_path)
+    return total_size
+
+def format_size(size_bytes):
+    for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+        if size_bytes < 1024.0:
+            break
+        size_bytes /= 1024.0
+    return f"{size_bytes:.2f} {unit}"
+
+
 @app.route('/website')
 def appWebsite():
     if not isActive():
         return onSessionExpired()
+    for i in data['sites']:
+        i['totalSize'] = format_size(get_folder_size(i['path']))
     return render_template('website.html', websites=data['sites'], domains=data['domains'])
 
 @app.route('/domain/delete')

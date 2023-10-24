@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Website</title>
     {% include 'head.html' %}
+    
 </head>
 
 <div class="modal fade" tabindex="-1" id="addDomainModal">
@@ -68,7 +69,7 @@
         <div class="card bg-dark" style="margin-top: 16px;">
             <div class="card-body">
                 <div class="row">
-                    <div class="col">
+                    <div class="col-md">
                         <input type="text" class="form-control bg-dark" style="color: white;" placeholder="Search..." oninput="searchDomain(this.value);">
                         <script>
                             function searchDomain(vv) {
@@ -83,23 +84,24 @@
                             }
                         </script>
                     </div>
-                    <div class="col-2">
+                    <div class="col-md">
                         <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addDomainModal" style="width: 100%;"><i class="bi-plus"></i> Add Website</button>
                     </div>
                 </div>
             </div>
         </div>
+        
         <div class="card bg-dark" style="margin-top: 16px;">
             <div class="card-body">
                 <h3><i class="bi-hdd-network"></i> Website</h3>
                 <div class="table-responsive">
-
                     <table class="table">
                         <thead>
                             <th>URL</th>
                             <th>Status</th>
                             <th>Start file</th>
                             <th>endpoint</th>
+                            <th>Disk usage</th>
                             <th>Action</th>
                         </thead>
                         <tbody>
@@ -119,7 +121,8 @@
                                 <td>
                                     <code>{{web.endpoint}}</code>
                                 </td>
-                                <td>
+                                <td>{{web.totalSize}}</td>
+                                <td style="display: flex; justify-content: space-between; align-items: center;">
                                     {% if web.status == 'running' %}
                                     <a href="/website/stop?id={{web.id}}"  class="btn btn-sm btn-danger"><i class="bi-stop"></i> Stop</a>
                                     <a href="/website/restart?id={{web.id}}"  class="btn btn-sm btn-secondary"><i class="bi-arrow-clockwise"></i> Restart</a>
