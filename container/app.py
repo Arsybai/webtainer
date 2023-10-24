@@ -8,6 +8,7 @@ from time import sleep
 import subprocess
 import ssl
 import socket
+import re
 
 app = Flask(__name__)
 app.secret_key = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -407,6 +408,20 @@ def appSslWebsite():
         'message':"Skipped. You can set it in SSL/TLS menu."
     })
 
+def add_www_subdomain(domain):
+    # Regular expression to match domain names
+    domain_regex = r"^(?:www\.)?([a-zA-Z0-9-]+)(?:\.[a-z]{2,})$"
+    
+    # Check if the input is a valid domain name
+    if re.match(domain_regex, domain):
+        # If it's a domain, add "www." subdomain
+        if not domain.startswith("www."):
+            domain = "www." + domain
+        return domain
+    else:
+        # If it's not a valid domain, consider it a subdomain
+        return None
+
 @app.route('/website/build')
 def appBuildWebsite():
     if not isActive():
@@ -415,6 +430,8 @@ def appBuildWebsite():
     port_ = str(site_['id'])[:4].replace('0','8')
     site_['port'] = port_
     saveData()
+    if add_www_subdomain(site_["url"]):
+        site_['url'] = add_www_subdomain(site_['url'])
     ret_ = ""
     if site_['lang'] == 'html':
         block_ = block.html(site_)
